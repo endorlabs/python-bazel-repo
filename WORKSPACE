@@ -21,3 +21,14 @@ pip_install(
     requirements = "//:requirements.txt",
 )
 
+http_archive(
+    name = "rules_endor",
+    sha256 = "a6cc70e7ce5d6663425aa3b1359267e0a80692c628b0b36a0bde9eb853d3b7e8",
+    strip_prefix = "rules_endor-1.1.0",
+    urls = [
+        "https://github.com/endorlabs/rules_endor/archive/refs/tags/v1.1.0.tar.gz",
+    ],
+)
+
+load("@rules_endor//endorctl:repositories.bzl", "rules_endorctl_toolchains")
+rules_endorctl_toolchains(repository_url = "https://api.staging.endorlabs.com")
