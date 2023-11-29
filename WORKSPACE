@@ -1,34 +1,35 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# Specify the version of the rules_python you want to use
+
+# Update the SHA and VERSION to the lastest version available here:
+# https://github.com/bazelbuild/rules_python/releases.
+
+SHA="84aec9e21cc56fbc7f1335035a71c850d1b9b5cc6ff497306f84cced9a769841"
+VERSION="0.23.1"
+
 http_archive(
     name = "rules_python",
-    sha256 = "b6d46438523a3ec0f3cead544190ee13223a52f6a6765a29eae7b7cc24cc83a0",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.1.0/rules_python-0.1.0.tar.gz",
+    sha256 = SHA,
+    strip_prefix = "rules_python-{}".format(VERSION),
+    url = "https://github.com/bazelbuild/rules_python/releases/download/{}/rules_python-{}.tar.gz".format(VERSION,VERSION),
 )
 
-# Initialize rules_python
 load("@rules_python//python:repositories.bzl", "py_repositories")
-
 py_repositories()
 
-# Load the pip_install rule
-load("@rules_python//python:pip.bzl", "pip_install")
-
-# Create a central repo that knows about the dependencies needed for our Python code.
-pip_install(
-    name = "my_deps",
-    requirements = "//:requirements.txt",
+load("@rules_python//python:repositories.bzl", "python_register_toolchains")
+python_register_toolchains(
+    name = "python_3_11",
+    # Available versions are listed in @rules_python//python:versions.bzl.
+    # We recommend using the same version your team is already standardized on.
+    python_version = "3.11",
 )
 
-http_archive(
-    name = "rules_endor",
-    sha256 = "a6cc70e7ce5d6663425aa3b1359267e0a80692c628b0b36a0bde9eb853d3b7e8",
-    strip_prefix = "rules_endor-1.1.0",
-    urls = [
-        "https://github.com/endorlabs/rules_endor/archive/refs/tags/v1.1.0.tar.gz",
-    ],
-)
+load("@rules_python//python:pip.bzl", "pip_parse")
 
-load("@rules_endor//endorctl:repositories.bzl", "rules_endorctl_toolchains")
-rules_endorctl_toolchains(repository_url = "https://api.staging.endorlabs.com")
+pip_parse(
+   name = "my_deps",
+   requirements_lock = "//:requirements.txt",
+)
+load("@my_deps//:requirements.bzl", "install_deps")
+install_deps()

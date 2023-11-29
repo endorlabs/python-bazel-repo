@@ -1,13 +1,16 @@
-import requests
-
-def get_external_ip():
-    response = requests.get("https://api.ipify.org?format=json")
-    ip = response.json()["ip"]
-    return ip
-
-def main():
-    print(f"My external IP is: {get_external_ip()}")
-
-if __name__ == "__main__":
-    main()
-
+from src.python.libs.calculator.calculator import Calculator
+from flask import Flask
+from random import randint
+ 
+app = Flask(__name__)
+calculator = Calculator()
+ 
+@app.route('/')
+def randomNumberCalculator():
+  randomInt1 = randint(0, 250)
+  randomInt2 = randint(0, 250)
+  return "{} + {} = {}?".format(randomInt1, randomInt2, \
+  calculator.add(randomInt1, randomInt2))
+ 
+if __name__ == '__main__':
+  app.run(host='0.0.0.0',port=8181)

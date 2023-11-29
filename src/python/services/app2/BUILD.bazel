@@ -1,11 +1,13 @@
 load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@my_deps//:requirements.bzl", "requirement")
 
 py_binary(
     name = "app2",
     srcs = ["app2.py"],
     main = "app2.py",
     deps = [
-        "@my_deps//pypi__requests",
+        requirement("Flask"),
+        "//src/python/libs/calculator:calculator",
     ],
 )
 

@@ -1,10 +1,11 @@
-load("@rules_python//python:defs.bzl", "py_binary", "py_test")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@my_deps//:requirements.bzl", "requirement")
 
 py_binary(
     name = "app",
     srcs = ["app.py"],
     main = "app.py",
     deps = [
-        "@my_deps//pypi__requests",
+        requirement("requests"),
     ],
 )
